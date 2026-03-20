@@ -328,7 +328,7 @@
 
     async function initLiff() {
       liffWait.hidden = false;
-      mainContent.hidden = false;
+      mainContent.hidden = true;
       try {
         if (!window.liff || typeof liff.init !== "function") {
           throw new Error("LIFF SDK が読み込めませんでした。");
@@ -338,12 +338,12 @@
         liffReady = true;
       } catch (e) {
         console.error(e);
-        statusLine.textContent =
-          "LINE連携の初期化に失敗しましたが、フォームは表示されます。必要に応じてそのままご入力・送信ください。";
-        statusLine.classList.remove("error");
-      } finally {
-        liffWait.hidden = true;
+        liffWait.textContent = "LINEからアクセスしてください";
+        return;
       }
+
+      liffWait.hidden = true;
+      mainContent.hidden = false;
     }
 
     form.addEventListener("submit", async (e) => {
