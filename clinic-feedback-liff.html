@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>お気づきの点をお聞かせください</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet" />
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/versions/2/sdk.js"></script>
+  <style>
+    :root {
+      --bg: #faf6f1;
+      --card: #fffaf5;
+      --ink: #4a3f3a;
+      --muted: #8b7e76;
+      --accent: #e8a598;
+      --accent-soft: rgba(232, 165, 152, 0.22);
+      --border: rgba(138, 118, 108, 0.18);
+      --success-bg: #f0f6f1;
+      --success-ink: #3d5a4a;
+      --radius: 20px;
+      --shadow: 0 12px 40px rgba(74, 63, 58, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      font-family: "Zen Maru Gothic", "Hiragino Sans", "Yu Gothic UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(120% 80% at 0% 0%, rgba(232, 165, 152, 0.35), transparent 55%),
+        radial-gradient(90% 60% at 100% 20%, rgba(196, 218, 212, 0.4), transparent 50%),
+        var(--bg);
+      padding: max(24px, env(safe-area-inset-top)) 20px max(32px, env(safe-area-inset-bottom));
+    }
+
+    .wrap {
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    header h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1.45;
+      margin: 0 0 10px;
+      letter-spacing: 0.02em;
+    }
+
+    header p {
+      margin: 0;
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 26px 22px 28px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    label {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    label .req {
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--accent);
+      margin-left: 6px;
+    }
+
+    .field {
+      margin-bottom: 22px;
+    }
+
+    .field:last-of-type {
+      margin-bottom: 0;
+    }
+
+    select,
+    textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 1rem;
+      color: var(--ink);
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238b7e76' d='M1.4 0L6 4.6 10.6 0 12 1.4l-6 6-6-6z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .hint {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      margin-top: 26px;
+      padding: 15px 20px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(135deg, #e8a598 0%, #d98a7c 100%);
+      border: none;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 6px 22px rgba(217, 138, 124, 0.35);
+      transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 26px rgba(217, 138, 124, 0.4);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 18px;
+      font-size: 0.85rem;
+      text-align: center;
+      color: var(--muted);
+      min-height: 1.4em;
+    }
+
+    .status.error {
+      color: #b85c5c;
+    }
+
+    .thanks {
+      display: none;
+      text-align: center;
+      padding: 8px 6px 4px;
+    }
+
+    .thanks.show {
+      display: block;
+    }
+
+    .thanks .icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 18px;
+      background: var(--success-bg);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .thanks h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 0 0 14px;
+      color: var(--success-ink);
+    }
+
+    .thanks p {
+      margin: 0;
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: var(--muted);
+    }
+
+    #formView.hidden {
+      display: none;
+    }
+
+    .liff-wait {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div id="liffWait" class="liff-wait" hidden>読み込み中です…</div>
+
+    <div id="mainContent" hidden>
+      <header>
+        <h1>お気づきの点をお聞かせください</h1>
+        <p>いただいたお声は、よりよい診療のために大切に活用させていただきます。</p>
+      </header>
+
+      <div class="card">
+        <div id="thanks" class="thanks" role="status" aria-live="polite">
+          <div class="icon" aria-hidden="true">🌿</div>
+          <h2>お送りいただき、ありがとうございます</h2>
+          <p>
+            貴重なご意見・ご感想を心よりお礼申し上げます。内容を確認のうえ、院内の改善やスタッフ教育などに活かしてまいります。<br />
+            引き続きどうぞよろしくお願いいたします。
+          </p>
+        </div>
+
+        <form id="feedbackForm" novalidate>
+          <div class="field">
+            <label for="category">カテゴリ<span class="req">必須</span></label>
+            <select id="category" name="category" required>
+              <option value="" disabled selected>選択してください</option>
+              <option value="診療内容">診療内容</option>
+              <option value="待ち時間">待ち時間</option>
+              <option value="スタッフの対応">スタッフの対応</option>
+              <option value="院内設備">院内設備</option>
+              <option value="その他">その他</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="content">内容<span class="req">必須</span></label>
+            <textarea
+              id="content"
+              name="content"
+              required
+              placeholder="具体的にお書きいただけますと、改善に役立ちます（個人が特定される情報は避けてください）"
+              maxlength="4000"
+            ></textarea>
+            <p class="hint">※個人情報（氏名・住所・電話番号など）の記載はお控えください。</p>
+          </div>
+
+          <div class="field">
+            <label for="severity">いまのお気持ちに近いもの<span class="req">必須</span></label>
+            <select id="severity" name="severity" required>
+              <option value="" disabled selected>選択してください</option>
+              <option value="low">少し気になった</option>
+              <option value="medium">困った</option>
+              <option value="high">とても困った</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn">送信する</button>
+          <p id="statusLine" class="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* TODO: LINE Developers の LIFF 画面で発行した ID に差し替えてください */
+    const LIFF_ID = "2009546719-Rk02vZh";
+
+    const WEBHOOK_URL =
+      "https://feathery-defenselessly-ace.ngrok-free.dev/webhook/clinic-feedback";
+
+    const form = document.getElementById("feedbackForm");
+    const thanks = document.getElementById("thanks");
+    const submitBtn = document.getElementById("submitBtn");
+    const statusLine = document.getElementById("statusLine");
+    const mainContent = document.getElementById("mainContent");
+    const liffWait = document.getElementById("liffWait");
+    let liffReady = false;
+
+    const severityLabels = {
+      low: "少し気になった",
+      medium: "困った",
+      high: "とても困った",
+    };
+
+    function setLoading(isLoading) {
+      submitBtn.disabled = isLoading;
+      submitBtn.textContent = isLoading ? "送信中…" : "送信する";
+    }
+
+    function showError(msg) {
+      statusLine.textContent = msg;
+      statusLine.classList.add("error");
+    }
+
+    function clearError() {
+      statusLine.textContent = "";
+      statusLine.classList.remove("error");
+    }
+
+    async function initLiff() {
+      liffWait.hidden = false;
+      mainContent.hidden = false;
+      try {
+        if (!window.liff || typeof liff.init !== "function") {
+          throw new Error("LIFF SDK が読み込めませんでした。");
+        }
+
+        await liff.init({ liffId: LIFF_ID });
+        liffReady = true;
+      } catch (e) {
+        console.error(e);
+        statusLine.textContent =
+          "LINE連携の初期化に失敗しましたが、フォームは表示されます。必要に応じてそのままご入力・送信ください。";
+        statusLine.classList.remove("error");
+      } finally {
+        liffWait.hidden = true;
+      }
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      clearError();
+
+      const category = document.getElementById("category").value;
+      const content = document.getElementById("content").value.trim();
+      const severity = document.getElementById("severity").value;
+
+      if (!category || !content || !severity) {
+        showError("未入力の項目があります。ご確認ください。");
+        return;
+      }
+
+      let lineUserId = null;
+      let displayName = null;
+      if (liffReady && window.liff) {
+        try {
+          if (liff.isLoggedIn && liff.isLoggedIn()) {
+            const token = liff.getDecodedIDToken?.();
+            lineUserId = token?.sub ?? null;
+            const profile =
+              liff.getProfile && typeof liff.getProfile === "function"
+                ? await liff.getProfile().catch(() => null)
+                : null;
+            displayName = profile?.displayName ?? null;
+          }
+        } catch (err) {
+          // LIFF 側の情報取得に失敗しても、フォーム送信自体は継続します。
+          console.warn("LIFF 情報の取得に失敗しました。", err);
+        }
+      }
+
+      const payload = {
+        category,
+        content,
+        severity,
+        severityLabel: severityLabels[severity] ?? severity,
+        lineUserId,
+        displayName,
+        submittedAt: new Date().toISOString(),
+      };
+
+      setLoading(true);
+      try {
+        const res = await fetch(WEBHOOK_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        form.style.display = "none";
+        thanks.classList.add("show");
+      } catch (err) {
+        console.error(err);
+        showError("送信できませんでした。通信状況をご確認のうえ、しばらくしてからお試しください。");
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    initLiff();
+  </script>
+</body>
+</html>
