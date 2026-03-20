@@ -351,7 +351,13 @@
         liffReady = true;
       } catch (e) {
         console.error(e);
-        liffWait.textContent = "LINEからアクセスしてください";
+        const errText =
+          e instanceof Error
+            ? e.message
+            : typeof e === "string"
+              ? e
+              : e?.message ?? String(e);
+        liffWait.textContent = errText;
         return;
       }
 
