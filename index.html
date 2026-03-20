@@ -361,8 +361,21 @@
         return;
       }
 
-      liffWait.hidden = true;
+      // デバッグ用: success 時の表示ステップを順番に記録
+      document.title = "step1-showing-form";
       mainContent.hidden = false;
+      mainContent.removeAttribute("hidden");
+
+      document.title = "step2-hiding-liffwait";
+      liffWait.hidden = true;
+      liffWait.removeAttribute("hidden");
+
+      document.title = "step3-showing-form";
+      mainContent.hidden = false;
+      mainContent.removeAttribute("hidden");
+
+      // LINEクライアント外チェックは行わず、フォームを表示する
+      document.title = "step4-ignore-isinclient";
     }
 
     form.addEventListener("submit", async (e) => {
