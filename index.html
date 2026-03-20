@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet" />
-  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/versions/2/sdk.js"></script>
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js" defer></script>
   <style>
     :root {
       --bg: #faf6f1;
@@ -330,7 +330,7 @@
       return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
-    async function waitForLiffInit(timeoutMs = 3000) {
+    async function waitForLiffInit(timeoutMs = 10000) {
       const start = Date.now();
       while (Date.now() - start < timeoutMs) {
         if (window.liff && typeof window.liff.init === "function") return true;
@@ -343,7 +343,7 @@
       liffWait.hidden = false;
       mainContent.hidden = true;
       try {
-        const canInit = await waitForLiffInit(3000);
+        const canInit = await waitForLiffInit(10000);
         if (!canInit) throw new Error("LIFF SDK が利用できませんでした。");
 
         const initResult = await liff.init({ liffId: LIFF_ID });
