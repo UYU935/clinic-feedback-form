@@ -292,7 +292,7 @@
 
   <script>
     /* TODO: LINE Developers の LIFF 画面で発行した ID に差し替えてください */
-    const LIFF_ID = "2009546719-Rk02vZhB";
+    const LIFF_ID = "2009546719-Rk02vZh";
 
     const WEBHOOK_URL =
       "https://feathery-defenselessly-ace.ngrok-free.dev/webhook/clinic-feedback";
@@ -326,15 +326,28 @@
       statusLine.classList.remove("error");
     }
 
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function waitForLiffInit(timeoutMs = 3000) {
+      const start = Date.now();
+      while (Date.now() - start < timeoutMs) {
+        if (window.liff && typeof window.liff.init === "function") return true;
+        await sleep(50);
+      }
+      return false;
+    }
+
     async function initLiff() {
       liffWait.hidden = false;
       mainContent.hidden = true;
       try {
-        if (!window.liff || typeof liff.init !== "function") {
-          throw new Error("LIFF SDK が読み込めませんでした。");
-        }
+        const canInit = await waitForLiffInit(3000);
+        if (!canInit) throw new Error("LIFF SDK が利用できませんでした。");
 
-        await liff.init({ liffId: LIFF_ID });
+        const initResult = await liff.init({ liffId: LIFF_ID });
+        console.log("liff.init result:", initResult);
         liffReady = true;
       } catch (e) {
         console.error(e);
