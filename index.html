@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet" />
-  <!-- LIFF SDK は body 末尾で onload/onerror 付きにして読み込みます -->
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/versions/2/sdk.js"></script>
   <style>
     :root {
       --bg: #faf6f1;
@@ -292,10 +292,10 @@
 
   <script>
     /* TODO: LINE Developers の LIFF 画面で発行した ID に差し替えてください */
-    const LIFF_ID = "2009546719-Rk02vZhB";
+    const LIFF_ID = "2009546719-Rk02vZh";
 
     const WEBHOOK_URL =
-      "https://feathery-defenselessly-ace.ngrok-free.dev/webhook/clinic-feedback";
+      "https://n8n-production-6ba4.up.railway.app/webhook/clinic-feedback";
 
     const form = document.getElementById("feedbackForm");
     const thanks = document.getElementById("thanks");
@@ -319,10 +319,6 @@
     function showError(msg) {
       statusLine.textContent = msg;
       statusLine.classList.add("error");
-      if (mainContent.hidden) {
-        liffWait.textContent = msg;
-        liffWait.hidden = false;
-      }
     }
 
     function clearError() {
@@ -330,10 +326,26 @@
       statusLine.classList.remove("error");
     }
 
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function waitForLiffInit(timeoutMs = 3000) {
+      const start = Date.now();
+      while (Date.now() - start < timeoutMs) {
+        if (window.liff && typeof window.liff.init === "function") return true;
+        await sleep(50);
+      }
+      return false;
+    }
+
     async function initLiff() {
       liffWait.hidden = false;
       mainContent.hidden = true;
       try {
+        const canInit = await waitForLiffInit(3000);
+        if (!canInit) throw new Error("LIFF SDK が利用できませんでした。");
+
         const initResult = await liff.init({ liffId: LIFF_ID });
         console.log("liff.init result:", initResult);
         liffReady = true;
@@ -349,21 +361,8 @@
         return;
       }
 
-      // デバッグ用: success 時の表示ステップを順番に記録
-      document.title = "step1-showing-form";
-      mainContent.hidden = false;
-      mainContent.removeAttribute("hidden");
-
-      document.title = "step2-hiding-liffwait";
       liffWait.hidden = true;
-      liffWait.removeAttribute("hidden");
-
-      document.title = "step3-showing-form";
       mainContent.hidden = false;
-      mainContent.removeAttribute("hidden");
-
-      // LINEクライアント外チェックは行わず、フォームを表示する
-      document.title = "step4-ignore-isinclient";
     }
 
     form.addEventListener("submit", async (e) => {
@@ -430,11 +429,7 @@
       }
     });
 
+    initLiff();
   </script>
-  <script
-    src="https://static.line-scdn.net/liff/edge/2/sdk.js"
-    onload="initLiff()"
-    onerror="showError('SDK読み込み失敗')"
-  ></script>
 </body>
 </html>
